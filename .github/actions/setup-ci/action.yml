@@ -1,0 +1,35 @@
+name: 'Setup CI'
+description: 'Setup CI environment'
+
+inputs:
+  install-dependencies:
+    required: false
+    description: 'Install dependencies'
+    default: 'true'
+  github-token:
+    required: true
+    description: 'GitHub token for mise to avoid API rate limits when fetching GitHub-hosted tools'
+    default: ${{ github.token }}
+  skip-apm:
+    required: false
+    description: 'Skip APM installation'
+    default: 'true'
+runs:
+  using: composite
+  steps:
+    - name: Setup mise and install tools
+      uses: jdx/mise-action@e6a8b3978addb5a52f2b4cd9d91eafa7f0ab959d # v4
+      with:
+        github_token: ${{ inputs.github-token }}
+    # used for pnpm store cache only — node itself is managed by mise
+    - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+      if: inputs.install-dependencies == 'true'
+      with:
+        cache: 'pnpm'
+    - name: Install pnpm dependencies
+      shell: bash
+      if: inputs.install-dependencies == 'true'
+      # postinstall hook skips mise deps install on CI (see mise.toml), so run explicitly here
+      run: mise deps install ${{ inputs.skip-apm == 'true' && '--skip apm' || '' }}
+      env:
+        MISE_GITHUB_TOKEN: ${{ inputs.github-token }}

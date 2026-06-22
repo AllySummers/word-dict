@@ -1,0 +1,26 @@
+catalog:
+  react: 19.2.7
+  react-dom: 19.2.7
+  '@types/react': 19.2.17
+  '@types/react-dom': 19.2.3
+  '@types/node': 26.0.0
+
+catalogs:
+  vitest:
+    vitest: &vitest_version 4.1.9
+    '@vitest/ui': *vitest_version
+    '@vitest/coverage-v8': *vitest_version
+autoInstallPeers: false
+peerDependencyRules:
+  ignoreMissing:
+    - react
+    - react-dom
+    - react-native
+
+saveExact: true
+
+sideEffectsCache: false
+blockExoticSubdeps: true
+allowBuilds:
+  esbuild: true
+  sharp: true
